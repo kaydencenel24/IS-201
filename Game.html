@@ -4,62 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Hungry Caterpillar Runner</title>
-
-<style>
-html,body{
-    margin:0;
-    overflow:hidden;
-    background:#87ceeb;
-    font-family:Arial,sans-serif;
-}
-
-canvas{
-    display:block;
-}
-
-#ui{
-    position:absolute;
-    top:10px;
-    left:15px;
-    color:#222;
-    font-weight:bold;
-    user-select:none;
-}
-
-#score{
-    font-size:28px;
-}
-
-#highscore{
-    font-size:18px;
-}
-
-#instructions{
-    margin-top:8px;
-    font-size:14px;
-}
-
-#gameOver{
-    position:absolute;
-    left:50%;
-    top:40%;
-    transform:translate(-50%,-50%);
-    text-align:center;
-    display:none;
-    color:#222;
-}
-
-#gameOver h1{
-    margin:0;
-    font-size:54px;
-}
-
-#gameOver p{
-    font-size:22px;
-}
-</style>
+  <link rel="stylesheet" href="styles/style.css">
 </head>
-<body>
+<body class="game-page">
+  <nav class="navbar">
+    <a href="Game.html">Game</a>
+    <a href="Hobby.html">Hobby</a>
+    <a href="index.html">Resume</a>
+  </nav>
 
 <div id="ui">
     <div id="score">Score: 0</div>
