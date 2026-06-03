@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kaydence Nelson | Resume</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      background: #e6e9ef;
+      color: #1f2937;
+      line-height: 1.75;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 32px;
+      background: radial-gradient(circle at top, rgba(15, 35, 63, 0.14), transparent 42%),
+        #e6e9ef;
+    }
+
+    .resume-card {
+      width: min(100%, 920px);
+      background: #f7f9fb;
+      border-radius: 28px;
+      box-shadow: 0 40px 120px rgba(15, 23, 42, 0.09);
+      overflow: hidden;
+      border: 1px solid rgba(148, 163, 184, 0.2);
+    }
+
+    .topbar {
+      padding: 18px 44px 0;
+      display: flex;
+      justify-content: flex-end;
+      gap: 24px;
+      background: #f7f9fb;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+    }
+
+    .topbar a {
+      text-decoration: none;
+      color: #1f2937;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .hero {
+      padding: 26px 44px 36px;
+      background: linear-gradient(135deg, #0f2040 0%, #1a3c61 100%);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .hero__photo {
+      width: 140px;
+      height: 140px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid rgba(255, 255, 255, 0.28);
+      box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .hero__content {
+      min-width: 0;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(2.25rem, 3.2vw, 3.6rem);
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+    }
+
+    .hero__contact {
+      margin-top: 22px;
+      display: grid;
+      gap: 10px;
+      color: rgba(255, 255, 255, 0.92);
+      font-size: 0.98rem;
+    }
+
+    .hero__contact-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .hero__contact-label {
+      font-weight: 600;
+      opacity: 0.95;
+    }
+
+    .hero p {
+      margin: 18px 0 0;
+      max-width: 680px;
+      font-size: 1.05rem;
+      opacity: 0.94;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .content {
+      padding: 40px 44px 44px;
+    }
+
+    .section {
+      margin-bottom: 40px;
+    }
+
+    .section h2 {
+      margin: 0 0 20px;
+      font-size: 0.92rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #10203a;
+      opacity: 0.85;
+    }
+
+    .section h2::after {
+      content: "";
+      display: block;
+      width: 44px;
+      height: 3px;
+      margin-top: 12px;
+      border-radius: 9999px;
+      background: #3b6390;
+    }
+
+    .section p,
+    .section li {
+      margin: 0 0 16px;
+      color: #4f5f70;
+      font-size: 1rem;
+    }
+
+    .section ul {
+      padding-left: 20px;
+      margin: 0;
+    }
+
+    .section li::marker {
+      color: #3b6390;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px;
+    }
+
+    .card {
+      background: #f3f6f9;
+      border: 1px solid #d1dce6;
+      border-radius: 20px;
+      padding: 26px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    }
+
+    .card h3 {
+      margin: 0 0 10px;
+      font-size: 1.02rem;
+      color: #10203a;
+    }
+
+    .card p {
+      margin: 0;
+      color: #475569;
+    }
+
+    .card .date {
+      display: block;
+      margin-top: 8px;
+      color: #64748b;
+      font-size: 0.94rem;
+    }
+
+    .experience-list {
+      display: grid;
+      gap: 24px;
+    }
+
+    @media (max-width: 720px) {
+      body {
+        padding: 18px;
+      }
+      .hero,
+      .content {
+        padding: 28px 24px;
+      }
+      .hero {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .hero__photo {
+        width: 120px;
+        height: 120px;
+      }
+      .hero p {
+        margin-top: 16px;
+      }
+      .row {
+        grid-template-columns: 1fr;
+      }
+      .resume-card {
+        box-shadow: 0 24px 80px rgba(15, 23, 42, 0.08);
+      }
+    }
+  </style>
+</head>
+<body>
+  <article class="resume-card">
+    <div class="topbar">
+      <a href="Game.html">Game</a>
+      <a href="Hobby.html">Hobby</a>
+    </div>
+    <header class="hero">
+      <img class="hero__photo" src="Professional photo.jpeg" alt="Photo of Kaydence Nelson" />
+      <div class="hero__content">
+        <h1>Kaydence Nelson</h1>
+        <p>Focused student and experienced team leader with a consistent history of responsibility, service, and strong performance in educational and work settings.</p>
+        <div class="hero__contact">
+          <div class="hero__contact-item">
+            <span class="hero__contact-label">Phone:</span>
+            <span>480-815-2626</span>
+          </div>
+          <div class="hero__contact-item">
+            <span class="hero__contact-label">Email:</span>
+            <span>kaydencenel24@gmail.com</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="content">
+      <div class="row">
+        <div class="section">
+          <h2>Education</h2>
+          <div class="card">
+            <h3>High School Diploma</h3>
+            <p>Completed in 2024 with strong academic achievement.</p>
+          </div>
+          <div class="card">
+            <h3>Brigham Young University</h3>
+            <p>Enrolled 2024–Present. Continuing higher education while building leadership and work experience.</p>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2>Achievements</h2>
+          <div class="card">
+            <ul>
+              <li>Honor Roll, 2020–2024</li>
+              <li>Employee of the Month, 2025</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>International Business Study Abroad</h2>
+        <div class="card">
+          <h3>BYU Marriott Business School Semester Abroad</h3>
+          <p>April 2026–June 2026</p>
+          <p>Completed a semester-long study abroad program across Rome, Paris, and London, focusing on international business strategy and corporate innovation.</p>
+          <ul>
+            <li>Participated in business visits to global leaders including L'Oréal, Amazon, Boeing, and more.</li>
+            <li>Learned European market approaches, cross-cultural leadership, and global operations firsthand.</li>
+            <li>Engaged with professionals in beauty, tech, aerospace, and finance sectors.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Experience</h2>
+        <div class="card">
+          <h3>Student Manager — BYU Cougareat</h3>
+          <p>September2026–Present</p>
+          <p>Lead daily operations and support team coordination while maintaining quality service standards in a busy campus dining environment.</p>
+        </div>
+        <div class="card">
+          <h3>Dishwasher — BYU Cougareat</h3>
+          <p> September2024– April 2026</p>
+          <p>Provided reliable support for food-service operations, ensuring a clean, safe, and efficient kitchen environment.</p>
+        </div>
+      </div>
+    </section>
+  </article>
+</body>
+</html>
