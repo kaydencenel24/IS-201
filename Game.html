@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Hungry Caterpillar Runner</title>
+
+<style>
+html,body{
+    margin:0;
+    overflow:hidden;
+    background:#87ceeb;
+    font-family:Arial,sans-serif;
+}
+
+canvas{
+    display:block;
+}
+
+#ui{
+    position:absolute;
+    top:10px;
+    left:15px;
+    color:#222;
+    font-weight:bold;
+    user-select:none;
+}
+
+#score{
+    font-size:28px;
+}
+
+#highscore{
+    font-size:18px;
+}
+
+#instructions{
+    margin-top:8px;
+    font-size:14px;
+}
+
+#gameOver{
+    position:absolute;
+    left:50%;
+    top:40%;
+    transform:translate(-50%,-50%);
+    text-align:center;
+    display:none;
+    color:#222;
+}
+
+#gameOver h1{
+    margin:0;
+    font-size:54px;
+}
+
+#gameOver p{
+    font-size:22px;
+}
+</style>
+</head>
+<body>
+
+<div id="ui">
+    <div id="score">Score: 0</div>
+    <div id="highscore">Best: 0</div>
+    <div id="instructions">
+        SPACE / TAP = Jump<br>
+        Jump Again = Double Jump
+    </div>
+</div>
+
+<div id="gameOver">
+    <h1>Game Over</h1>
+    <p>Press Space or Tap to Restart</p>
+</div>
+
+<canvas id="game"></canvas>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+function resize(){
+    canvas.width=window.innerWidth;
+    canvas.height=window.innerHeight;
+}
+resize();
+window.addEventListener("resize",resize);
+
+const scoreEl=document.getElementById("score");
+const highEl=document.getElementById("highscore");
+const gameOverEl=document.getElementById("gameOver");
+
+let highScore=Number(
+    localStorage.getItem("caterpillarBest")||0
+);
+
+highEl.textContent="Best: "+highScore;
+
+function groundY(){
+    return canvas.height-120;
+}
+
+let score=0;
+let gameOver=false;
+let spawnTimer=0;
+
+const clouds=[];
+
+for(let i=0;i<7;i++){
+    clouds.push({
+        x:Math.random()*canvas.width,
+        y:40+Math.random()*180,
+        speed:0.3+Math.random()*0.8,
+        size:45+Math.random()*50
+    });
+}
+
+const caterpillar={
+    x:120,
+    y:0,
+    width:120,
+    height:50,
+    velocityY:0,
+    gravity:0.85,
+    jumpCount:0,
+    segments:5
+};
+
+function resetPlayer(){
+    caterpillar.y=groundY()-caterpillar.height;
+    caterpillar.velocityY=0;
+    caterpillar.jumpCount=0;
+    caterpillar.segments=5;
+}
+resetPlayer();
+
+const fruitTypes=[
+{
+    type:"apple",
+    width:50,
+    height:50
+},
+{
+    type:"strawberry",
+    width:50,
+    height:55
+},
+{
+    type:"orange",
+    width:58,
+    height:58
+},
+{
+    type:"pear",
+    width:60,
+    height:78
+},
+{
+    type:"watermelon",
+    width:95,
+    height:95
+}
+];
+
+const obstacles=[];
+
+function createObstacle(){
+
+    const fruit=
+    fruitTypes[
+        Math.floor(Math.random()*fruitTypes.length)
+    ];
+
+    obstacles.push({
+        type:fruit.type,
+        width:fruit.width,
+        height:fruit.height,
+        x:canvas.width+60,
+        y:groundY()-fruit.height
+    });
+}
+
+function drawSky(){
+
+    const g=
+    ctx.createLinearGradient(
+        0,0,0,canvas.height
+    );
+
+    g.addColorStop(0,"#8fd8ff");
+    g.addColorStop(1,"#eefaff");
+
+    ctx.fillStyle=g;
+    ctx.fillRect(
+        0,0,
+        canvas.width,
+        canvas.height
+    );
+}
+
+function drawClouds(){
+
+    ctx.fillStyle=
+    "rgba(255,255,255,0.92)";
+
+    for(const c of clouds){
+
+        c.x-=c.speed;
+
+        if(c.x<-150){
+            c.x=canvas.width+150;
+        }
+
+        ctx.beginPath();
+        ctx.arc(c.x,c.y,c.size*.4,0,Math.PI*2);
+        ctx.arc(c.x+25,c.y-15,c.size*.5,0,Math.PI*2);
+        ctx.arc(c.x+60,c.y,c.size*.4,0,Math.PI*2);
+        ctx.fill();
+    }
+}
+
+function drawGround(){
+
+    ctx.fillStyle="#56b64f";
+
+    ctx.fillRect(
+        0,
+        groundY(),
+        canvas.width,
+        canvas.height-groundY()
+    );
+
+    ctx.strokeStyle="#2f7d32";
+    ctx.lineWidth=5;
+
+    ctx.beginPath();
+    ctx.moveTo(0,groundY());
+    ctx.lineTo(canvas.width,groundY());
+    ctx.stroke();
+}
+
+function drawApple(f){
+
+    const cx=f.x+f.width/2;
+    const cy=f.y+f.height/2;
+
+    ctx.fillStyle="#e53935";
+
+    ctx.beginPath();
+    ctx.arc(cx,cy,20,0,Math.PI*2);
+    ctx.fill();
+
+    ctx.fillStyle="#ff8a80";
+    ctx.beginPath();
+    ctx.arc(cx-6,cy-6,6,0,Math.PI*2);
+    ctx.fill();
+
+    ctx.strokeStyle="#6d4c41";
+    ctx.lineWidth=3;
+    ctx.beginPath();
+    ctx.moveTo(cx,cy-18);
+    ctx.lineTo(cx+2,cy-28);
+    ctx.stroke();
+
+    ctx.fillStyle="#4caf50";
+    ctx.beginPath();
+    ctx.ellipse(
+        cx+8,cy-24,
+        8,4,
+        -.5,0,Math.PI*2
+    );
+    ctx.fill();
+}
+
+function drawOrange(f){
+
+    const cx=f.x+f.width/2;
+    const cy=f.y+f.height/2;
+
+    ctx.fillStyle="#fb8c00";
+
+    ctx.beginPath();
+    ctx.arc(cx,cy,24,0,Math.PI*2);
+    ctx.fill();
+
+    ctx.fillStyle="#ffb74d";
+
+    for(let i=0;i<6;i++){
+        ctx.beginPath();
+        ctx.arc(
+            cx+Math.cos(i)*8,
+            cy+Math.sin(i)*8,
+            2,
+            0,
+            Math.PI*2
+        );
+        ctx.fill();
+    }
+
+    ctx.fillStyle="#4caf50";
+    ctx.beginPath();
+    ctx.ellipse(
+        cx+8,cy-24,
+        8,4,
+        -.4,0,Math.PI*2
+    );
+    ctx.fill();
+}
+
+function drawPear(f){
+
+    const cx=f.x+f.width/2;
+
+    ctx.fillStyle="#8bc34a";
+
+    ctx.beginPath();
+    ctx.ellipse(
+        cx,
+        f.y+48,
+        18,
+        24,
+        0,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.ellipse(
+        cx,
+        f.y+28,
+        11,
+        16,
+        0,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fill();
+
+    ctx.strokeStyle="#6d4c41";
+    ctx.lineWidth=3;
+
+    ctx.beginPath();
+    ctx.moveTo(cx,f.y+12);
+    ctx.lineTo(cx+2,f.y);
+    ctx.stroke();
+
+    ctx.fillStyle="#4caf50";
+    ctx.beginPath();
+    ctx.ellipse(
+        cx+8,
+        f.y+8,
+        7,
+        4,
+        -.5,
+        0,
+        Math.PI*2
+    );
+    ctx.fill();
+}
+
+function drawStrawberry(f){
+
+    const cx=f.x+f.width/2;
+
+    ctx.fillStyle="#e53935";
+
+    ctx.beginPath();
+
+    ctx.moveTo(cx,f.y+10);
+
+    ctx.quadraticCurveTo(
+        f.x+f.width,
+        f.y+20,
+        cx,
+        f.y+f.height
+    );
+
+    ctx.quadraticCurveTo(
+        f.x,
+        f.y+20,
+        cx,
+        f.y+10
+    );
+
+    ctx.fill();
+
+    ctx.fillStyle="#4caf50";
+
+    for(let i=0;i<5;i++){
+
+        ctx.beginPath();
+
+        ctx.moveTo(cx,f.y+10);
+
+        ctx.lineTo(
+            cx-14+i*7,
+            f.y
+        );
+
+        ctx.lineTo(
+            cx-10+i*7,
+            f.y+12
+        );
+
+        ctx.fill();
+    }
+
+    ctx.fillStyle="#ffeb3b";
+
+    for(let y=20;y<50;y+=10){
+        for(let x=-10;x<=10;x+=10){
+
+            ctx.beginPath();
+            ctx.arc(
+                cx+x,
+                f.y+y,
+                1.8,
+                0,
+                Math.PI*2
+            );
+            ctx.fill();
+        }
+    }
+}
+
+function drawWatermelon(f){
+
+    const cx=f.x+f.width/2;
+    const r=40;
+
+    ctx.fillStyle="#2e7d32";
+
+    ctx.beginPath();
+    ctx.arc(
+        cx,
+        f.y+r,
+        r,
+        Math.PI,
+        0
+    );
+    ctx.fill();
+
+    ctx.fillStyle="#ff5252";
+
+    ctx.beginPath();
+    ctx.arc(
+        cx,
+        f.y+r,
+        r-8,
+        Math.PI,
+        0
+    );
+    ctx.fill();
+
+    ctx.fillStyle="#111";
+
+    for(let i=-2;i<=2;i++){
+
+        ctx.beginPath();
+        ctx.ellipse(
+            cx+i*10,
+            f.y+35,
+            2,
+            4,
+            0,
+            0,
+            Math.PI*2
+        );
+        ctx.fill();
+    }
+}
+
+function drawFruit(f){
+
+    switch(f.type){
+
+        case "apple":
+            drawApple(f);
+            break;
+
+        case "orange":
+            drawOrange(f);
+            break;
+
+        case "pear":
+            drawPear(f);
+            break;
+
+        case "strawberry":
+            drawStrawberry(f);
+            break;
+
+        case "watermelon":
+            drawWatermelon(f);
+            break;
+    }
+}
+
+function drawCaterpillar(){
+
+    const wiggle=
+    Math.sin(Date.now()*0.015)*3;
+
+    for(
+        let i=0;
+        i<caterpillar.segments;
+        i++
+    ){
+
+        const x=
+        caterpillar.x+i*14;
+
+        const y=
+        caterpillar.y+
+        25+
+        Math.sin(i*.7)*wiggle;
+
+        ctx.fillStyle=
+        i===caterpillar.segments-1
+        ? "#66bb6a"
+        : "#43a047";
+
+        ctx.beginPath();
+        ctx.arc(x,y,12,0,Math.PI*2);
+        ctx.fill();
+    }
+
+    const hx=
+    caterpillar.x+
+    caterpillar.segments*14;
+
+    const hy=
+    caterpillar.y+25;
+
+    ctx.fillStyle="#7ed957";
+
+    ctx.beginPath();
+    ctx.arc(hx,hy,16,0,Math.PI*2);
+    ctx.fill();
+
+    ctx.fillStyle="white";
+    ctx.beginPath();
+    ctx.arc(hx+6,hy-5,4,0,Math.PI*2);
+    ctx.fill();
+
+    ctx.fillStyle="black";
+    ctx.beginPath();
+    ctx.arc(hx+7,hy-5,2,0,Math.PI*2);
+    ctx.fill();
+
+    ctx.strokeStyle="black";
+    ctx.lineWidth=2;
+
+    ctx.beginPath();
+    ctx.moveTo(hx-4,hy-12);
+    ctx.lineTo(hx-8,hy-22);
+
+    ctx.moveTo(hx+4,hy-12);
+    ctx.lineTo(hx+10,hy-22);
+
+    ctx.stroke();
+}
+
+function jump(){
+
+    if(gameOver)return;
+
+    if(caterpillar.jumpCount<2){
+
+        caterpillar.velocityY=
+        caterpillar.jumpCount===0
+        ? -17
+        : -15;
+
+        caterpillar.jumpCount++;
+    }
+}
+
+function hit(a,b){
+
+    return(
+        a.x<b.x+b.width &&
+        a.x+a.width>b.x &&
+        a.y<b.y+b.height &&
+        a.y+a.height>b.y
+    );
+}
+
+function update(){
+
+    if(gameOver)return;
+
+    caterpillar.velocityY+=
+    caterpillar.gravity;
+
+    caterpillar.y+=
+    caterpillar.velocityY;
+
+    if(
+        caterpillar.y>
+        groundY()-caterpillar.height
+    ){
+
+        caterpillar.y=
+        groundY()-caterpillar.height;
+
+        caterpillar.velocityY=0;
+        caterpillar.jumpCount=0;
+    }
+
+    spawnTimer++;
+
+    const spawnRate=
+    Math.max(
+        50,
+        95-score*.25
+    );
+
+    if(spawnTimer>spawnRate){
+
+        createObstacle();
+        spawnTimer=0;
+    }
+
+    const speed=
+    7+score*.12;
+
+    for(
+        let i=obstacles.length-1;
+        i>=0;
+        i--
+    ){
+
+        const o=obstacles[i];
+
+        o.x-=speed;
+
+        if(
+            hit(
+                {
+                    x:caterpillar.x,
+                    y:caterpillar.y,
+                    width:95,
+                    height:45
+                },
+                o
+            )
+        ){
+
+            gameOver=true;
+
+            gameOverEl.style.display=
+            "block";
+
+            if(score>highScore){
+
+                highScore=score;
+
+                localStorage.setItem(
+                    "caterpillarBest",
+                    score
+                );
+
+                highEl.textContent=
+                "Best: "+highScore;
+            }
+        }
+
+        if(o.x+o.width<0){
+
+            obstacles.splice(i,1);
+
+            score++;
+
+            if(score%10===0){
+                caterpillar.segments++;
+            }
+
+            scoreEl.textContent=
+            "Score: "+score;
+        }
+    }
+}
+
+function draw(){
+
+    drawSky();
+    drawClouds();
+    drawGround();
+
+    for(const o of obstacles){
+        drawFruit(o);
+    }
+
+    drawCaterpillar();
+}
+
+function loop(){
+
+    update();
+    draw();
+
+    requestAnimationFrame(loop);
+}
+
+loop();
+
+function restart(){
+
+    score=0;
+    spawnTimer=0;
+    gameOver=false;
+
+    obstacles.length=0;
+
+    scoreEl.textContent=
+    "Score: 0";
+
+    gameOverEl.style.display=
+    "none";
+
+    resetPlayer();
+}
+
+window.addEventListener(
+    "keydown",
+    e=>{
+
+        if(e.code==="Space"){
+
+            e.preventDefault();
+
+            if(gameOver){
+                restart();
+            }else{
+                jump();
+            }
+        }
+    }
+);
+
+window.addEventListener(
+    "pointerdown",
+    ()=>{
+
+        if(gameOver){
+            restart();
+        }else{
+            jump();
+        }
+    }
+);
+</script>
+
+</body>
+</html>

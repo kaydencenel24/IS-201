@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hobby: Painting!</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      background: #f4ebe5;
+      color: #3c2f2a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .card {
+      width: min(100%, 760px);
+      background: #fff7f1;
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 0 24px 70px rgba(92, 46, 27, 0.12);
+      border: 1px solid rgba(190, 129, 104, 0.3);
+    }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+    .gallery img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 16px;
+      border: 1px solid rgba(190, 129, 104, 0.35);
+      box-shadow: 0 10px 30px rgba(92, 46, 27, 0.08);
+    }
+    h1 {
+      margin-top: 0;
+      font-size: clamp(2rem, 2.5vw, 2.8rem);
+      color: #7a3b2d;
+      text-align: center;
+      text-decoration: underline;
+      text-underline-offset: 8px;
+    }
+    p {
+      margin: 1rem 0 0;
+      line-height: 1.8;
+      color: #5e4238;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Hobby: Painting!</h1>
+    <p>I love to paint! I have taken a painting class during my time at BYU, but I have been self taught since I started at age 12.</p>
+    <div class="gallery">
+      <img src="All art class pictures.jpeg" alt="Painting class artwork" />
+      <img src="Christmascheer.jpeg" alt="Painting titled Christmas cheer" />
+      <img src="IMG_1757.jpeg" alt="Painting project image" />
+      <img src="IMG_2835.jpeg" alt="Painting project image" />
+      <img src="IMG_3204.jpeg" alt="Painting project image" />
+      <img src="IMG_3447.jpeg" alt="Painting project image" />
+      <img src="IMG_3757.jpeg" alt="Painting project image" />
+      <img src="IMG_4061.jpeg" alt="Painting project image" />
+      <img src="IMG_4062.jpeg" alt="Painting project image" />
+      <img src="Lip painting.JPG" alt="Lip painting artwork" />
+    </div>
+  </div>
+</body>
+</html>
